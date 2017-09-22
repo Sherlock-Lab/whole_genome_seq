@@ -4,39 +4,35 @@
 import os
 
 #define which steps need to be carried out
-mkOutputDir = False
-trim = False
+mkOutputDir = True
+trim = True
 mapping = True
-coverage = False
+coverage = True
 CNV = False # does not work 
 variantCall = True
 annotation = True
 deletionCheck = False # does not work 
 
 #define working directory from which this program is being run
-wkdir = '/Volumes/Promise\ Pegasus/Lucas/whole_genome_seq/FLC_clones/Replicat_2F'
-#wkdir = '~/Desktop/SherlockLab/revision_work/sequence_analysis/'
+wkdir = 'YOUR_WORKING_DIRECTORY_HERE'
 
 #define directory where all the fastq data files are and file prefix and suffix
 dataDir = wkdir+'fastq_files/'
-#fastqPrefix = '141126_PINKERTON_0343_BC4J1PACXX_L7_'
+
 r1FileSuffix = 'L004_R1_001.fastq'
 r2FileSuffix = 'L004_R2_001.fastq'
 
-#all_index_tags_dic  = {'P1-G12':'GACGTCGA-GAGCCTTA_S84', 'P1-C6':'CTGCGCAT-CCTAGAGT_S30'}
+
 all_index_tags_dic  = {}
-index_file = open ('index_key_NextSeq_KGS_F.txt', 'r')
+index_file = open ('index_key.txt', 'r') # Define your filename that contain the sample
 sample_count = -1
 for line in index_file:
 	(strain, I7, seq7, I5, seq5) = line.rstrip('\n').split('\t') # split the line
 	sample_count += 1
-	if strain.startswith('P'):
-		all_index_tags_dic[strain] = seq7 + '-' + seq5 + '_S' + str(sample_count)
+	all_index_tags_dic[strain] = seq7 + '-' + seq5 + '_S' + str(sample_count) # Change according to the file name you get from the facility to match the fastq files name.
 index_file.close()
 
-#define where cutadapt program is so it can be called and its parameters
-#cutAdapt = '/Users/miajaffe/whole_genome/software/cutadapt-1.7.1/bin/cutadapt'
-#cutAdapt = '/Users/jaffe/seq_software/cutadapt-1.7.1/bin/cutadapt'
+
 beginningTrim = str(10)
 qualityCutoff = str(30)
 lengthThresh = str(12)
@@ -44,26 +40,26 @@ read1Adaptor = 'CTGTCTCTTATACACATCTCCGAGCCCACGAGAC'
 read2Adaptor = 'CTGTCTCTTATACACATCTGACGCTGCCGACGA'
 
 #define bwa and parameters
-RefIndex = '/Volumes/Promise\ Pegasus/Lucas/whole_genome_seq/Reference_index/Saccharomyces_cerevisiae.R64-1-1.dna.toplevel.fa'
+RefIndex = '/Volumes/Promise_Pegasus/Lucas/whole_genome_seq/Reference_index/Saccharomyces_cerevisiae.R64-1-1.dna.toplevel.fa'
 #The reference is already build !!!!!!
 # Best to be in the Reference_index directory and build those there.
 # bwa index fasta_file.fa
 # samtools faidx fasta_file.fa
-# java -jar /Volumes/Promise\ Pegasus/picard.jar CreateSequenceDictionary R=fasta_file.fa O=path/to/fasta_file.dict
+# java -jar /Volumes/Promise_Pegasus/picard.jar CreateSequenceDictionary R=fasta_file.fa O=path/to/fasta_file.dict
 
 #define picard directory
-picard = '/Volumes/Promise\ Pegasus/picard.jar'
+picard = '/Volumes/Promise_Pegasus/picard.jar'
 
 #define GATK directory
-gatk = '/Volumes/Promise\ Pegasus/GenomeAnalysisTK-3.6/GenomeAnalysisTK.jar'
-#RefIndex = '/Volumes/Promise\ Pegasus/Lucas/whole_genome_seq/Reference_gatk/S288C_reference_sequence_R64-2-1_20150113.fsa'
+gatk = '/Volumes/Promise_Pegasus/GenomeAnalysisTK-3.6/GenomeAnalysisTK.jar'
+#RefIndex = '/Volumes/Promise_Pegasus/Lucas/whole_genome_seq/Reference_gatk/S288C_reference_sequence_R64-2-1_20150113.fsa'
 
 #define snpEff directory
-snpEff = '/Volumes/Promise\ Pegasus/snpEff/snpEff.jar'
-snpEff_config = '/Volumes/Promise\ Pegasus/snpEff/snpEff.config'
+snpEff = '/Volumes/Promise_Pegasus/snpEff/snpEff.jar'
+snpEff_config = '/Volumes/Promise_Pegasus/snpEff/snpEff.config'
 
 for strain in all_index_tags_dic:
-	index_tag = strain + '-' + all_index_tags_dic[strain]
+	index_tag = strain + '-' + all_index_tags_dic[strain] # make sure this match the file name of the fastq files
 	print (index_tag)
 	#TAG SPECIFIC PARAMETERS
 	#define the index tag data to be analyzed
@@ -166,7 +162,7 @@ for strain in all_index_tags_dic:
 
 		#make coverage file
 		print("making coverage file")
-		#python coverage.py 10000 coverage_10kb.csv
+		#python coverage.py index_tag 10000 coverage_10kb.csv
 		os.system("python coverageLH.py " + index_tag + " 1000 ")
 
 		#remove pile up file
@@ -176,8 +172,8 @@ for strain in all_index_tags_dic:
 		#make plots
 		print("plotting")
 		#Rscript cov_plot.r 
-		os.system("Rscript cov_plot.r " + index_tag)
-		print("Rscript cov_plot.r " + index_tag)
+		os.system("Rscript cov_plot.r " + wkdir + ' ' + index_tag)
+		print("Rscript cov_plot.r "+ wkdir + ' ' + index_tag)
 
 
 	if variantCall == True:
