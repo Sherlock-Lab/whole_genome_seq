@@ -172,7 +172,7 @@ for strain in all_index_tags_dic:
 		#make plots
 		print("plotting")
 		#Rscript cov_plot.r 
-		os.system("Rscript cov_plot.r " + wkdir + ' ' + index_tag)
+		os.system("Rscript cov_plot.r " + wkdir + ' ' + index_tag + ' 40') # here we give to the R script 3 arguments, the working directory the name of the sample and the y axis limit that you can change according to your expected coverage
 		print("Rscript cov_plot.r "+ wkdir + ' ' + index_tag)
 
 
@@ -186,6 +186,7 @@ for strain in all_index_tags_dic:
 		
 		#GATK recommended filtering
 		#brute force filtering
+		#Not sure what they all mean
 		outfile1 = "gatk.snps.vcf"
 		outfile2 = "gatk.snps.filtered.vcf"
 		outfile3 = "gatk.indels.vcf"
