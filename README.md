@@ -2,7 +2,7 @@
 
 This script is made to analyze whole genome sequencing data using a simple commande line.
 
-You need to set up your working director, your file containing the index of the different sample and your fastq files names in the seq_pipleine file.
+You need to set up your working director, your file containing the index of the different sample and your fastq files names in the seq_pipline file.
 Make sure you match the fastq files names with the suffix because this is variable.
 
 This script will:
